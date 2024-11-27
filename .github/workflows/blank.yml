@@ -19,9 +19,6 @@ on:
         description: 'Destination image namespace'
         required: false
         default: 'wa/hub'
-      dst_image_tag:
-        description: 'Destination image tag'
-        required: true
       dst_registry_username:
         description: 'Destination image registry username'
         required: true
