@@ -53,10 +53,10 @@ jobs:
 
       - name: Notify Message
         run: |
-          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> registry.cn-beijing.aliyuncs.com/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=badfc85d-68f4-4f06-a47e-5518560f1e13"
+          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> registry.cn-beijing.aliyuncs.com/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
       - name: Notify Failed
         if: failure()
         run: |
-          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像失败 ${{ github.event.inputs.src_image }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=badfc85d-68f4-4f06-a47e-5518560f1e13"
+          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像失败 ${{ github.event.inputs.src_image }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
 
       
