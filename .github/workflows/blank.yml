@@ -2,42 +2,34 @@
 
 name: Sync Images
 
-# Controls when the workflow will run
 on:
   workflow_dispatch:
     inputs:
       src_image:
         description: 'Origin image'
         required: true
-        type: string
       dst_image_tag:
         description: 'Destination image tag'
         required: true
-        type: string
       dst_image_registry:
         description: 'Destination image registry'
         required: false
-        type: string
         default: 'registry.cn-beijing.aliyuncs.com'
       dst_image_name:
         description: 'Destination image namespace'
         required: false
-        type: string
         default: 'wa/hub'
       dst_image_tag:
         description: 'Destination image tag'
         required: true
-        type: string
       dst_registry_username:
         description: 'Destination image registry username'
         required: true
-        type: string
-        default: '{{ secrets.DST_REGISTRY_USERNAME }}'
+        default: '${{ secrets.DST_REGISTRY_USERNAME }}'
       dst_registry_password:
         description: 'Destination image registry password'
         required: true
-        type: string
-        default: '{{ secrets.DST_REGISTRY_PASSWORD }}'
+        default: '${{ secrets.DST_REGISTRY_PASSWORD }}'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
