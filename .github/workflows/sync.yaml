@@ -1,0 +1,72 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Sync Image Harbor
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform name'
+        required: true
+        default: 'linux/amd64'
+        type: choice
+        options:
+          - linux/amd64
+          - linux/arm64
+          - linux/arm/v7
+          - linux/arm/v6
+      src_image:
+        description: 'Origin image'
+        required: true
+      dst_image_tag:
+        description: 'Destination image tag'
+        required: true
+      dst_image_name:
+        description: 'Destination image namespace'
+        required: true
+        default: 'wa/hub'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      - name: Docker Login
+        # You may pin to the exact commit or the version.
+        # uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        uses: docker/login-action@v3.3.0
+        with:
+          # Server address of Docker registry. If not set then will default to Docker Hub
+          registry: 'registry.yygu.cn'
+          # Username used to log against the Docker registry
+          username: ${{ secrets.YYGU_REGISTRY_USERNAME }}
+          # Password or personal access token used to log against the Docker registry
+          password: ${{ secrets.YYGU_REGISTRY_PASSWORD }}
+
+      - name: Sync Images
+        run: |
+          set -e
+          docker pull ${{ github.event.inputs.src_image }} --platform ${{ github.event.inputs.platform }}
+          docker tag ${{ github.event.inputs.src_image }} registry.yygu.cn/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
+          docker push registry.yygu.cn/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
+
+      - name: Notify Message
+        run: |
+          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> registry.yygu.cn/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
+      - name: Notify Failed
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像失败 ${{ github.event.inputs.src_image }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
+
+      
