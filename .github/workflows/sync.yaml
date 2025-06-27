@@ -48,7 +48,7 @@ jobs:
         uses: docker/login-action@v3.3.0
         with:
           # Server address of Docker registry. If not set then will default to Docker Hub
-          registry: 'registry.yygu.cn'
+          registry: ${{ secrets.YYGU_REGISTRY }}
           # Username used to log against the Docker registry
           username: ${{ secrets.YYGU_REGISTRY_USERNAME }}
           # Password or personal access token used to log against the Docker registry
@@ -58,12 +58,12 @@ jobs:
         run: |
           set -e
           docker pull ${{ github.event.inputs.src_image }} --platform ${{ github.event.inputs.platform }}
-          docker tag ${{ github.event.inputs.src_image }} registry.yygu.cn/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
-          docker push registry.yygu.cn/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
+          docker tag ${{ github.event.inputs.src_image }} ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
+          docker push ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
 
       - name: Notify Message
         run: |
-          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> registry.yygu.cn/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
+          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
       - name: Notify Failed
         if: failure()
         run: |
