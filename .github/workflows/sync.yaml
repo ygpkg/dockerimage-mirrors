@@ -18,11 +18,8 @@ on:
       src_image:
         description: 'Origin image'
         required: true
-      dst_image_tag:
-        description: 'Destination image tag'
-        required: true
-      dst_image_name:
-        description: 'Destination image namespace'
+      dst_image:
+        description: 'Destination image'
         required: true
         default: 'wa/hub'
 
@@ -58,12 +55,12 @@ jobs:
         run: |
           set -e
           docker pull ${{ github.event.inputs.src_image }} --platform ${{ github.event.inputs.platform }}
-          docker tag ${{ github.event.inputs.src_image }} ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
-          docker push ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }}
+          docker tag ${{ github.event.inputs.src_image }} ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image }}
+          docker push ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image }}
 
       - name: Notify Message
         run: |
-          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image_name }}:${{ github.event.inputs.dst_image_tag }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
+          curl -H "Content-Type: application/json;charset=utf-8"  -d "{\"msgtype\": \"text\",\"text\": {\"content\":\"同步镜像成功 ${{ github.event.inputs.src_image }} -> ${{ secrets.YYGU_REGISTRY }}/${{ github.event.inputs.dst_image }} \"}}" "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2b01dba4-89ed-434a-8ebb-433d989ae39b"
       - name: Notify Failed
         if: failure()
         run: |
