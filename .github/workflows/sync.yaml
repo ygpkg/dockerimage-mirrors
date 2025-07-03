@@ -21,7 +21,7 @@ on:
       dst_image:
         description: 'Destination image'
         required: true
-        default: 'wa/hub'
+        default: 'library/${{ github.event.inputs.src_image }}'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
